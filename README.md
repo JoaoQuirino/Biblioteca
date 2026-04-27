@@ -1,5 +1,4 @@
 # Biblioteca
 Trabalho do professor Fernando
-João Victor Rodrigues Quirino
-Pablo Meleke
+Nomes dos integrantes do grupo: João Victor Rodrigues QuirinoPablo Meleke
 Murilo Maziero
