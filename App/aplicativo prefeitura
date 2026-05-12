@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Piracicaba</title>
+    <style>
+        :root {
+            --cor-fundo: #fdfbf7;
+            --cor-texto: #4a4a4a;
+            --cor-destaque: #d35400;
+            --cor-borda: #eae5d9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .cabecalho h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .cabecalho p {
+            color: #888;
+            margin-top: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            border: 1px solid var(--cor-borda);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .campo { margin-bottom: 18px; }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            background-color: #fafafa;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--cor-destaque);
+            background-color: #fff;
+        }
+
+        .bloqueado {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+
+        .btn {
+            background-color: var(--cor-destaque);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { background-color: #ba4a00; }
+        .btn:active { transform: scale(0.98); }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px 12px;
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 500;
+            border-bottom: 2px solid var(--cor-borda);
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid var(--cor-borda);
+            font-size: 0.95rem;
+        }
+
+        .titulo-livro { font-weight: 600; color: #333; display: block; }
+        .detalhe-livro { font-size: 0.8rem; color: #888; }
+        
+        .tag-data {
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: #f0f4f8; 
+            color: #486581;
+        }
+        .badge.novo {
+            background: #e3fcef;
+            color: #0f5132;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cabecalho">
+        <h1>Biblioteca Municipal de Piracicaba</h1>
+        <p>Portal de Autoatendimento</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Novo Agendamento</h2>
+            <form id="formReserva">
+                <div class="campo">
+                    <label>Nome do Leitor</label>
+                    <input type="text" id="solicitante" placeholder="Ex: João Henrique" required>
+                </div>
+
+                <div class="campo">
+                    <label>Obra Desejada</label>
+                    <select id="livro" required onchange="carregaDetalhes()">
+                        <option value="" disabled selected>Escolha no acervo...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <div class="campo" style="flex: 1;">
+                        <label>Autor</label>
+                        <input type="text" id="autor" class="bloqueado" readonly>
+                    </div>
+                    <div class="campo" style="flex: 1;">
+                        <label>Ano</label>
+                        <input type="text" id="ano" class="bloqueado" readonly>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Data de Retirada</label>
+                    <input type="date" id="dataRetirada" required>
+                </div>
+
+                <div class="campo">
+                    <label>Assinatura (Token)</label>
+                    <input type="text" id="token" placeholder="Seu token de acesso" required>
+                </div>
+
+                <button type="submit" class="btn">Confirmar Reserva</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Reservas Ativas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Obra</th>
+                        <th>Solicitante</th>
+                        <th>Retirada</th>
+                        <th>Devolução</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="listaReservas">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const livrosDb = [
+            { id: 1, titulo: "Dom Casmurro", autor: "Machado de Assis", ano: "1899" },
+            { id: 2, titulo: "O Auto da Compadecida", autor: "Ariano Suassuna", ano: "1955" },
+            { id: 3, titulo: "1984", autor: "George Orwell", ano: "1949" },
+            { id: 4, titulo: "Grande Sertão: Veredas", autor: "João Guimarães Rosa", ano: "1956" },
+            { id: 5, titulo: "A Metamorfose", autor: "Franz Kafka", ano: "1915" },
+            { id: 6, titulo: "O Pequeno Príncipe", autor: "Antoine de Saint-Exupéry", ano: "1943" },
+            { id: 7, titulo: "Cem Anos de Solidão", autor: "Gabriel García Márquez", ano: "1967" },
+            { id: 8, titulo: "Fahrenheit 451", autor: "Ray Bradbury", ano: "1953" },
+            { id: 9, titulo: "A Hora da Estrela", autor: "Clarice Lispector", ano: "1977" },
+            { id: 10, titulo: "O Senhor dos Anéis", autor: "J.R.R. Tolkien", ano: "1954" }
+        ];
+
+        let lista = [
+            { solicitante: "Ana Paula", livro: "1984", autor: "George Orwell", ano: "1949", retirada: "2026-05-11" },
+            { solicitante: "Lucas Oliveira", livro: "O Pequeno Príncipe", autor: "A. Saint-Exupéry", ano: "1943", retirada: "2026-05-12" }
+        ];
+
+        const seletor = document.getElementById('livro');
+        
+        livrosDb.forEach(l => {
+            let opt = document.createElement('option');
+            opt.value = l.id;
+            opt.textContent = l.titulo;
+            seletor.appendChild(opt);
+        });
+
+        document.getElementById('dataRetirada').setAttribute('min', new Date().toISOString().split('T')[0]);
+
+        function carregaDetalhes() {
+            const escolhido = livrosDb.find(l => l.id == seletor.value);
+            if (escolhido) {
+                document.getElementById('autor').value = escolhido.autor;
+                document.getElementById('ano').value = escolhido.ano;
+            }
+        }
+
+        function formataBR(str) {
+            return new Date(str + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+
+        function addDias(str, dias) {
+            let d = new Date(str + 'T00:00:00');
+            d.setDate(d.getDate() + dias);
+            return d;
+        }
+
+        function atualizaTela() {
+            const tbody = document.getElementById('listaReservas');
+            tbody.innerHTML = '';
+
+            lista.forEach((item, i) => {
+                let ehNovo = i === lista.length - 1 && lista.length > 2;
+                let tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>
+                        <span class="titulo-livro">${item.livro}</span>
+                        <span class="detalhe-livro">${item.autor} (${item.ano})</span>
+                    </td>
+                    <td>${item.solicitante}</td>
+                    <td><span class="tag-data">${formataBR(item.retirada)}</span></td>
+                    <td><span class="tag-data" style="color: #d35400;">${addDias(item.retirada, 14).toLocaleDateString('pt-BR')}</span></td>
+                    <td><span class="badge ${ehNovo ? 'novo' : ''}">${ehNovo ? 'Recém Agendado' : 'Emprestado'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('formReserva').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let obra = livrosDb.find(l => l.id == seletor.value);
+            let dataReq = document.getElementById('dataRetirada').value;
+            let inicioReq = new Date(dataReq + 'T00:00:00');
+            let fimReq = addDias(dataReq, 14);
+
+            let conflito = false;
+            let liberacao = "";
+
+            for (let res of lista) {
+                if (res.livro === obra.titulo) {
+                    let inicioRes = new Date(res.retirada + 'T00:00:00');
+                    let fimRes = addDias(res.retirada, 14);
+
+                    if (inicioReq <= fimRes && fimReq >= inicioRes) {
+                        conflito = true;
+                        let proxDia = new Date(fimRes);
+                        proxDia.setDate(proxDia.getDate() + 1);
+                        liberacao = proxDia.toLocaleDateString('pt-BR');
+                        break;
+                    }
+                }
+            }
+
+            if (conflito) {
+                alert(Ops! O livro "${obra.titulo}" já está emprestado nesses dias.\nEle volta a ficar disponível no dia ${liberacao}.);
+                return;
+            }
+
+            lista.push({
+                solicitante: document.getElementById('solicitante').value,
+                livro: obra.titulo,
+                autor: obra.autor,
+                ano: obra.ano,
+                retirada: dataReq
+            });
+
+            atualizaTela();
+            
+            this.reset();
+            document.getElementById('autor').value = '';
+            document.getElementById('ano').value = '';
+        });
+
+        atualizaTela();
+    </script>
+</body>
+</html>
